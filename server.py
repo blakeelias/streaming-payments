@@ -29,4 +29,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 conn.sendall(price_bytes)
 
             if request_obj == 'accept':
-                print('Price accepted. Sending object now.')
+                print('Client accepted price. Sending object now.')
+
+
