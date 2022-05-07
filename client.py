@@ -17,5 +17,18 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.sendall(b"accept")
     else:
         exit(0)
-    
+
+
+    #### Payment logic: (put into a loop?)
+        
+    # Receive data:
+    data = s.recv(1024).decode('utf-8')
+        
+    # Receive payment request:
+    payment_request = s.recv(1024).decode('utf-8')
+
+    # Pay invoice
+    lib.pay_invoice(payment_request)
+
+        
 print(f"Received price: {data}")

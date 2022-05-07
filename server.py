@@ -32,3 +32,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 print('Client accepted price. Sending object now.')
 
 
+
+                ### Payment logic: (put into a loop?)
+                
+                # Send object:
+                conn.sendall(object_data)
+
+                # Request money:
+                payment_request = add_invoice(price)
+                conn.sendall(payment_request)
