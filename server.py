@@ -3,7 +3,7 @@
 import socket
 
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
-PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
+PORT = 65437  # Port to listen on (non-privileged ports are > 1023)
 
 
 object_prices = {
@@ -18,8 +18,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with conn:
         print(f"Connected by {addr}")
         while True:
-            request = conn.recv(1024)
-            if not request:
+            request_obj = conn.recv(1024).decode('utf-8')
+            if not request_obj:
                 break
             price = object_prices[request_obj]
-            conn.sendall(price)
+            price_bytes = str(price).encode('utf-8')
+            conn.sendall(price_bytes)
