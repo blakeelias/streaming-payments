@@ -1,5 +1,5 @@
 # streaming-payments
-Streaming Payments in Lightning
+### Streaming Payments in Lightning
 
 ________
 
@@ -18,4 +18,4 @@ User pays the invoice:
 
 
 
-The above takes place over a long-running socket connection, where the server continues to send data as long as client continues to pay.
+The above takes place over a long-running socket connection, where the server continues to send data as long as client continues to pay. Should either party fail to meet their obligation, the connection blocks.
