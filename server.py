@@ -2,13 +2,21 @@
 
 import socket
 
+import lib
+
+
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
-PORT = 65438  # Port to listen on (non-privileged ports are > 1023)
+PORT = 65440  # Port to listen on (non-privileged ports are > 1023)
 
 
 object_prices = {
     'object1': 10,
     'object2': 20,
+}
+
+object_data = {
+    'object1': 'object1 data',
+    'object2': 'object2 data',
 }
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -17,27 +25,42 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     conn, addr = s.accept()
     with conn:
         print(f"Connected by {addr}")
+
+        #### Initial handshake
+
+        # (1): Determine which object the consumer wants
+        request_obj = conn.recv(1024).decode('utf-8')
+
+        if not request_obj:
+            exit(0)
+
+        if request_obj not in object_prices:
+            print('Invalid object requested')
+
+        # (2): Send price to consumer:
+        price = object_prices[request_obj]
+        price_bytes = str(price).encode('utf-8')
+        conn.sendall(price_bytes)
+
+
+        # (3): Wait for acceptance:
+        accept_obj = conn.recv(1024).decode('utf-8')
+        
+        if accept_obj == 'accept':
+            print('Client accepted price. Begin sending object stream now.')
+        else:
+            print('Client rejected price.')
+            exit(0)
+            
+        #### Main streaming loop
         while True:
-            request_obj = conn.recv(1024).decode('utf-8')
+            # Send object:
+            print(f'Sending object: {object_data[request_obj]}')
+            conn.sendall(object_data[request_obj].encode('utf-8'))
 
-            if not request_obj:
-                break
+            # Request money:
+            payment_request = lib.add_invoice(price)
+            print(f'Sent payment request: {payment_request}')
+            conn.sendall(payment_request.encode('utf-8'))
 
-            if 'object' in request_obj:
-                price = object_prices[request_obj]
-                price_bytes = str(price).encode('utf-8')
-                conn.sendall(price_bytes)
-
-            if request_obj == 'accept':
-                print('Client accepted price. Sending object now.')
-
-
-
-                ### Payment logic: (put into a loop?)
-                
-                # Send object:
-                conn.sendall(object_data)
-
-                # Request money:
-                payment_request = add_invoice(price)
-                conn.sendall(payment_request)
+            # TODO: block until money received

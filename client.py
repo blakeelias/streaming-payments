@@ -2,8 +2,11 @@
 
 import socket
 
+import lib
+
+
 HOST = "127.0.0.1"  # The server's hostname or IP address
-PORT = 65438  # The port used by the server
+PORT = 65440  # The port used by the server
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
@@ -20,15 +23,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
 
     #### Payment logic: (put into a loop?)
+    while True:
+        # Receive object:
+        data = s.recv(1024).decode('utf-8')
+        print(f'Data received: {data}')
         
-    # Receive data:
-    data = s.recv(1024).decode('utf-8')
+        # Receive payment request:
+        payment_request = s.recv(1024).decode('utf-8')
+        print(f'Payment request received: {payment_request}')
         
-    # Receive payment request:
-    payment_request = s.recv(1024).decode('utf-8')
+        # Pay invoice
+        confirmation = lib.pay_invoice(payment_request)
+        print(f'Invoice paid: {confirmation}')
+        
 
-    # Pay invoice
-    lib.pay_invoice(payment_request)
-
-        
-print(f"Received price: {data}")
