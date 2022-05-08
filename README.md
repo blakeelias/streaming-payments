@@ -15,3 +15,7 @@ User receives the invoice:
 User pays the invoice:
 
 ![pay_invoice_small](https://user-images.githubusercontent.com/393923/167276333-22c7e0f0-b449-4689-bc11-dfce15830fad.png)
+
+
+
+The above takes place over a long-running socket connection, where the server continues to send data as long as client continues to pay.
